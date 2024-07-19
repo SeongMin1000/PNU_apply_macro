@@ -21,3 +21,12 @@ url = 'https://sugang.pusan.ac.kr/main'
 # 수강신청 날짜
 time_format = '%Y. %m. %d %H:%M:%S'
 apply_day_str = '2024. 07. 20 01:32:00' # 희망과목담기 2024. 08. 06 10:00:00
+
+# 초단위 반환
+def get_sec(time_str, time_format, is_server):
+    sec = datetime.strptime(time_str, time_format)
+    if is_server == 1:
+        sec += timedelta(hours=9)
+    return float(sec.timestamp())
+
+target_sec = get_sec(apply_day_str, time_format, 0)
