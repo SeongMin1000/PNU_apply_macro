@@ -66,3 +66,22 @@ def handle_alert():
         return False
 
 handle_alert()
+
+# 수강 신청 카운트 다운
+while True:
+    clock_str = driver.find_element(By.ID, "clock").text
+    timing_sec = get_sec(clock_str, time_format, 0)
+    milli_diff = target_sec - timing_sec
+    
+    print(clock_str)
+    print(f"수강신청 시작까지 {milli_diff}초 남았습니다")
+    print("---------------------------------------------")
+    if milli_diff <= 1:
+        print("수강신청을 시작합니다!")
+        time.sleep(0.8)
+        break
+    time.sleep(0.1)
+    
+# 수강신청 버튼 클릭
+apply_btn_id = "lecapplyShortCutBtn"
+driver.find_element(By.ID, apply_btn_id).click()
