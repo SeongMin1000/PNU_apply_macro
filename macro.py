@@ -30,3 +30,13 @@ def get_sec(time_str, time_format, is_server):
     return float(sec.timestamp())
 
 target_sec = get_sec(apply_day_str, time_format, 0)
+
+# 서버 시간
+def get_server_time():
+    response = urllib.request.urlopen(url)
+    date_str = response.headers['Date']
+    date_str = date_str.rstrip(' GMT')[5:]
+    server_sec = get_sec(date_str, '%d %b %Y %H:%M:%S', 1)
+    response.close()
+    
+    return server_sec
