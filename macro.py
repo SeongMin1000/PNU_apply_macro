@@ -40,3 +40,15 @@ def get_server_time():
     response.close()
     
     return server_sec
+
+# 40초 전에 로그인
+login_time = target_sec - 40                                  
+while True:
+    login_sec = get_server_time()
+
+    if(login_time <= login_sec):
+        driver.get(url)
+        driver.find_element(By.ID, "userID").send_keys("**********")   # 아이디 삽입
+        driver.find_element(By.ID, "userPW").send_keys("**********") # 비밀번호 삽입
+        driver.find_element(By.ID, "btnLogin").click()
+        break
