@@ -52,3 +52,17 @@ while True:
         driver.find_element(By.ID, "userPW").send_keys("**********") # 비밀번호 삽입
         driver.find_element(By.ID, "btnLogin").click()
         break
+    
+# 알림창 처리
+def handle_alert():
+    try:
+        alert_xpath = '//*[@id="root"]/div[2]/div[2]/p/a'
+        alert_btn = WebDriverWait(driver, 6).until(EC.element_to_be_clickable((By.XPATH, alert_xpath)))
+        alert_btn.click()
+        return True
+    except TimeoutException:
+        return False
+    except Exception:
+        return False
+
+handle_alert()
