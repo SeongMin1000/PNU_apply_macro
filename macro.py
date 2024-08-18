@@ -14,13 +14,14 @@ from datetime import timedelta
 webdriver_options = webdriver.ChromeOptions()
 webdriver_options.add_experimental_option("detach", True)  # 창을 닫지 않도록 설정
 
-driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=webdriver_options)
-driver.implicitly_wait(15)
+driver = webdriver.Chrome()
+driver.implicitly_wait(10)
+wait = WebDriverWait(driver, 10) 
 url = 'https://sugang.pusan.ac.kr/main'
 
 # 수강신청 날짜
 time_format = '%Y. %m. %d %H:%M:%S'
-apply_day_str = '2024. 07. 20 01:32:00' # 희망과목담기 2024. 08. 06 10:00:00
+apply_day_str = '2024. 08. 12 08:00:00'
 
 # 초단위 반환
 def get_sec(time_str, time_format, is_server):
@@ -48,22 +49,23 @@ while True:
 
     if(login_time <= login_sec):
         driver.get(url)
-        driver.find_element(By.ID, "userID").send_keys("**********")   # 아이디 삽입
-        driver.find_element(By.ID, "userPW").send_keys("**********") # 비밀번호 삽입
+        driver.find_element(By.ID, "userID").send_keys("******")   # 아이디 삽입
+        driver.find_element(By.ID, "userPW").send_keys("******") # 비밀번호 삽입
         driver.find_element(By.ID, "btnLogin").click()
         break
-    
+
 # 알림창 처리
 def handle_alert():
     try:
         alert_xpath = '//*[@id="root"]/div[2]/div[2]/p/a'
-        alert_btn = WebDriverWait(driver, 6).until(EC.element_to_be_clickable((By.XPATH, alert_xpath)))
+        alert_btn = wait.until(EC.element_to_be_clickable((By.XPATH, alert_xpath)))
         alert_btn.click()
         return True
     except TimeoutException:
         return False
     except Exception:
         return False
+    
 
 handle_alert()
 
@@ -74,14 +76,30 @@ while True:
     milli_diff = target_sec - timing_sec
     
     print(clock_str)
-    print(f"수강신청 시작까지 {milli_diff}초 남았습니다")
-    print("---------------------------------------------")
     if milli_diff <= 1:
         print("수강신청을 시작합니다!")
-        time.sleep(0.8)
+        time.sleep(0.6)
         break
     time.sleep(0.1)
     
-# 수강신청 버튼 클릭
+    
+# 수강신청
 apply_btn_id = "lecapplyShortCutBtn"
 driver.find_element(By.ID, apply_btn_id).click()
+
+sub_apply_btn ='.btn.btn-outline-primary.basket-apply'
+while True:
+    try:
+        subjects = wait.until(
+            EC.presence_of_all_elements_located((By.CSS_SELECTOR, sub_apply_btn))
+        )
+
+        for _ in range(len(subjects)):
+            element = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, sub_apply_btn)))
+            element.click()
+            
+            wait.until(EC.staleness_of(element))
+        
+    except TimeoutException:
+            print("올클")
+            break
